@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday | A Journey for You</title>
+    
+    <!-- External Libraries (2025 Standard CDNs) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --mocha: #a38a75; /* Pantone 2025 Mocha Mousse */
+            --accent: #ff4d6d;
+            --bg-dark: #0a0a0c;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden; /* Controlled by GSAP */
+            cursor: none;
+        }
+
+        h1, h2, .serif {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Modern Glassmorphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+        }
+
+        /* Custom Cursor */
+        #cursor {
+            width: 20px;
+            height: 20px;
+            background: var(--accent);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+            transition: transform 0.1s ease;
+        }
+
+        /* Floating Background Elements */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.5;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            from { transform: translateY(100vh) rotate(0deg); }
+            to { transform: translateY(-10vh) rotate(360deg); }
+        }
+
+        /* The Cake & Candles */
+        .cake {
+            position: relative;
+            width: 200px;
+            height: 100px;
+            background: var(--mocha);
+            border-radius: 10px 10px 0 0;
+            margin: 0 auto;
+        }
+
+        .candle {
+            width: 10px;
+            height: 40px;
+            background: linear-gradient(to top, var(--accent), #ffccd5);
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .flame {
+            width: 15px;
+            height: 20px;
+            background: #ff9d00;
+            border-radius: 50% 50% 20% 20%;
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            filter: blur(2px);
+            animation: flicker 0.1s infinite alternate;
+        }
+
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scale(1); }
+            100% { transform: translateX(-50%) scale(1.1) rotate(2deg); }
+        }
+
+        .section {
+            display: none;
+            opacity: 0;
+        }
+
+        .active-section {
+            display: flex;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+
+    <div id="cursor"></div>
+    <div id="bg-particles"></div>
+
+    <!-- Chapter 1: The Opener -->
+    <section id="chap1" class="section active-section flex-col items-center text-center p-6">
+        <h1 class="text-5xl md:text-7xl mb-4 italic">To Someone Special</h1>
+        <p class="text-gray-400 tracking-widest uppercase text-sm mb-12">August 01, 2026 • A Digital Journey</p>
+        <button onclick="nextChapter(2)" class="glass px-10 py-4 rounded-full hover:bg-white/10 transition-all duration-500 group">
+            Begin the Journey <span class="inline-block group-hover:translate-x-2 transition-transform">→</span>
+        </button>
+    </section>
+
+    <!-- Chapter 2: The Emotional Narrative (Bento Grid Style) -->
+    <section id="chap2" class="section flex-col items-center max-w-4xl p-6">
+        <h2 class="text-3xl mb-8 text-center">Reflections of You...</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+            <div class="glass p-8 rounded-3xl md:col-span-2">
+                <p class="text-xl leading-relaxed italic">"In a world of noise, you are my favorite melody."</p>
+            </div>
+            <div class="glass p-8 rounded-3xl flex items-center justify-center bg-gradient-to-br from-pink-500/20 to-transparent">
+                <span class="text-4xl">❤️</span>
+            </div>
+            <div class="glass p-8 rounded-3xl">
+                <p class="text-sm uppercase tracking-widest text-gray-400">The Kindness</p>
+            </div>
+            <div class="glass p-8 rounded-3xl md:col-span-2 italic">
+                You make every ordinary moment feel like a scene from a movie.
+            </div>
+        </div>
+        <button onclick="nextChapter(3)" class="mt-12 text-gray-400 hover:text-white transition-colors">Continue Scroll ↓</button>
+    </section>
+
+    <!-- Chapter 3: The Interactive Wish -->
+    <section id="chap3" class="section flex-col items-center text-center p-6">
+        <h2 class="text-4xl mb-12 serif">Light a Wish</h2>
+        <div class="relative mb-20 group cursor-pointer" onclick="blowCandle()">
+            <div class="cake shadow-2xl">
+                <div class="candle">
+                    <div class="flame" id="bday-flame"></div>
+                </div>
+            </div>
+            <p class="mt-8 text-xs text-accent animate-pulse uppercase tracking-widest">Tap to blow out the candle</p>
+        </div>
+    </section>
+
+    <!-- Chapter 4: The Finale -->
+    <section id="chap4" class="section flex-col items-center text-center p-6">
+        <div class="glass p-12 md:p-20 rounded-[3rem] max-w-2xl relative overflow-hidden">
+            <h1 class="text-6xl md:text-8xl mb-6 text-white leading-tight">Happy Birthday,<br><span class="text-accent italic">[NAME]</span></h1>
+            <p class="text-lg text-gray-300 leading-relaxed mb-8">
+                [MESSAGE: Today isn't just about celebrating your birth; it's about celebrating the incredible light you bring into my life every single day. Here's to more adventures, more laughs, and a year as beautiful as you are.]
+            </p>
+            <div class="flex gap-4 justify-center">
+                <button onclick="window.location.reload()" class="text-xs uppercase tracking-tighter text-gray-500 hover:text-white">Replay Story</button>
+                <span class="text-gray-700">|</span>
+                <p class="text-xs uppercase tracking-tighter text-gray-500 italic">Hand-crafted for you</p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // 1. Custom Cursor Logic
+        const cursor = document.getElementById('cursor');
+        document.addEventListener('mousemove', e => {
+            gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 });
+        });
+
+        // 2. Background Particles
+        const bg = document.getElementById('bg-particles');
+        for (let i = 0; i < 30; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.innerHTML = Math.random() > 0.5 ? '❤️' : '✨';
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.top = Math.random() * 100 + 'vh';
+            p.style.fontSize = (Math.random() * 20 + 10) + 'px';
+            p.style.animationDelay = (Math.random() * 10) + 's';
+            bg.appendChild(p);
+        }
+
+        // 3. Navigation System (GSAP)
+        function nextChapter(num) {
+            const current = document.querySelector('.active-section');
+            const next = document.getElementById('chap' + num);
+
+            gsap.to(current, { 
+                opacity: 0, 
+                y: -50, 
+                duration: 0.8, 
+                onComplete: () => {
+                    current.classList.remove('active-section');
+                    next.classList.add('active-section');
+                    gsap.fromTo(next, 
+                        { opacity: 0, y: 50 }, 
+                        { opacity: 1, y: 0, duration: 1, ease: "power4.out" }
+                    );
+                }
+            });
+        }
+
+        // 4. Interactive Candle Logic
+        function blowCandle() {
+            const flame = document.getElementById('bday-flame');
+            gsap.to(flame, { 
+                scale: 0, 
+                opacity: 0, 
+                duration: 0.5, 
+                ease: "power2.in",
+                onComplete: () => {
+                    setTimeout(() => {
+                        triggerConfetti();
+                        nextChapter(4);
+                    }, 500);
+                }
+            });
+        }
+
+        // 5. Celebration Finale
+        function triggerConfetti() {
+            const count = 200;
+            const defaults = { origin: { y: 0.7 }, zIndex: 1000 };
+
+            function fire(particleRatio, opts) {
+                confetti(Object.assign({}, defaults, opts, {
+                    particleCount: Math.floor(count * particleRatio)
+                }));
+            }
+
+            fire(0.25, { spread: 26, startVelocity: 55 });
+            fire(0.2, { spread: 60 });
+            fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+            fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+            fire(0.1, { spread: 120, startVelocity: 45 });
+        }
+        
+        // Initial Intro Animation
+        window.onload = () => {
+            gsap.from("#chap1 h1", { opacity: 0, y: 30, duration: 1.5, delay: 0.5 });
+            gsap.from("#chap1 p, #chap1 button", { opacity: 0, y: 20, duration: 1, delay: 1, stagger: 0.3 });
+        };
+    </script>
+</body>
+</html>
